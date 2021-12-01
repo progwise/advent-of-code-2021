@@ -1,3 +1,8 @@
-const hello = 'Hello World'
+import fs from 'fs'
+import path from 'path'
 
-console.log(hello)
+const filePath = path.join(__dirname, 'sonar.txt')
+const buffer = fs.readFileSync(filePath)
+const text = buffer.toString()
+
+console.log(text)
