@@ -1,17 +1,28 @@
 import fs from 'fs'
 import path from 'path'
 
-const filePath = path.join(__dirname, 'sonar.txt')
+const filePath = path.join(__dirname, 'map.txt')
 const buffer = fs.readFileSync(filePath)
 const text = buffer.toString()
-const measurements: Array<number> = text.split('\n').map((value) => Number.parseInt(value))
 
-let numberOfIncreases = 0
+const lines = text.split('\n')
 
-for (let index = 1; index < measurements.length; index++) {
-  if (measurements[index] > measurements[index - 1]) {
-    numberOfIncreases++
-  }
+const extractNumbers = (line: string): string[] => {
+  const characters = line.split('')
+  return characters.filter((char) => !Number.isNaN(Number.parseInt(char)))
 }
 
-console.log(numberOfIncreases)
+let cumSum = 0
+
+for (const line of lines) {
+  const numbers = extractNumbers(line)
+
+  console.log(numbers)
+  const firstNumberChar = numbers[0]
+  const lastNumberChar = numbers[numbers.length - 1]
+  const lineNumbers = Number.parseInt(firstNumberChar + lastNumberChar)
+
+  cumSum += lineNumbers
+}
+
+console.log(cumSum)

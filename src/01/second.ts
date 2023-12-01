@@ -1,23 +1,46 @@
 import fs from 'fs'
 import path from 'path'
 
-const filePath = path.join(__dirname, 'sonar.txt')
+const findDigitRegex = /(\d|one|two|three|four|five|six|seven|eight|nine)/g
+const reverseDigitRegex = /(\d|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)/g
+
+const possibleDigits = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+
+// "2"
+const parseDigit = (digit: string): string => {
+  const digitIndex = possibleDigits.findIndex((possibleDigit) => possibleDigit === digit)
+
+  if (digitIndex > -1) {
+    return (digitIndex + 1).toString()
+  }
+
+  return digit
+}
+
+const filePath = path.join(__dirname, 'map.txt')
 const buffer = fs.readFileSync(filePath)
 const text = buffer.toString()
-const measurements: Array<number> = text.split('\n').map((value) => Number.parseInt(value))
-const threeSumMeasurements: Array<number> = []
 
-for (let index = 0; index < measurements.length - 2; index++) {
-  const sum = measurements[index] + measurements[index + 1] + measurements[index + 2]
-  threeSumMeasurements.push(sum)
+const lines = text.split('\n')
+
+const extractNumbers = (line: string): [string, string] => {
+  return [
+    line.match(findDigitRegex)![0],
+    line.split('').reverse().join('').match(reverseDigitRegex)![0].split('').reverse().join(''),
+  ]
 }
 
-let numberOfIncreases = 0
+let cumSum = 0
 
-for (let index = 1; index < threeSumMeasurements.length; index++) {
-  if (threeSumMeasurements[index] > threeSumMeasurements[index - 1]) {
-    numberOfIncreases++
-  }
+for (const line of lines) {
+  const [firstNumber, lastNumber] = extractNumbers(line)
+  const firstNumberChar = parseDigit(firstNumber)
+  const lastNumberChar = parseDigit(lastNumber)
+  const lineNumbers = Number.parseInt(firstNumberChar + lastNumberChar)
+
+  console.log(lineNumbers, line)
+
+  cumSum += lineNumbers
 }
 
-console.log(numberOfIncreases)
+console.log(cumSum)
